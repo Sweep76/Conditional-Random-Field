@@ -5,30 +5,30 @@ class Corpus(object):
     UNK = '<UNK>'
 
     def __init__(self, fdata):
-        # 获取数据的句子
+        # Sentences for obtaining data
         self.sentences = self.preprocess(fdata)
-        # 获取数据的所有不同的词汇、词性和字符
+        # Words, tags, chars
         self.words, self.tags, self.chars = self.parse(self.sentences)
-        # 增加未知字符
+        # Add unknown character
         self.chars += [self.UNK]
 
-        # 词汇字典
+        # Dictionary of words, tags, chars
         self.wdict = {w: i for i, w in enumerate(self.words)}
-        # 词性字典
+        # Dictionary of tags
         self.tdict = {t: i for i, t in enumerate(self.tags)}
-        # 字符字典
+        # Dictionary of chars
         self.cdict = {c: i for i, c in enumerate(self.chars)}
 
-        # 未知字符索引
+        # Unknown index
         self.ui = self.cdict[self.UNK]
 
-        # 句子数量
+        # Sentence number
         self.ns = len(self.sentences)
-        # 词汇数量
+        # Word number
         self.nw = len(self.words)
-        # 词性数量
+        # Tag number
         self.nt = len(self.tags)
-        # 字符数量
+        # Char number
         self.nc = len(self.chars)
 
     def load(self, fdata):

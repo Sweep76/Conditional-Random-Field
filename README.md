@@ -1,5 +1,5 @@
 # Conditional-Random-Field
-Implementation of Conditional Random Fields (CRF) for sequence labeling tasks. Supports feature extraction, parameter optimization, and inference using probabilistic graphical models
+model for sequence labeling tasks, such as part-of-speech tagging, using features derived from input sequences and their contexts. It includes methods for training the model using stochastic gradient descent, making predictions, and evaluating performance on training and development datasets.
 
 # Conditional Random Field
 

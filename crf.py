@@ -12,11 +12,11 @@ from scipy.misc import logsumexp
 class CRF(object):
 
     def __init__(self, nt):
-        # 词性数量
+        # Part-of-speech count
         self.nt = nt
 
     def create_feature_space(self, data):
-        # 特征空间
+        # Feature Space
         self.epsilon = list({
             f for wiseq, tiseq in data
             for f in set(self.instantiate(wiseq, 0, -1, tiseq[0])).union(
@@ -24,14 +24,14 @@ class CRF(object):
                   for i, ti in enumerate(tiseq[1:], 1)]
             )
         })
-        # 特征对应索引的字典
+        # Dictionary of feature corresponding indices
         self.fdict = {f: i for i, f in enumerate(self.epsilon)}
-        # 特征空间维度
+        # Dimension of the feature space
         self.d = len(self.epsilon)
 
-        # 特征权重
+        # Feature weights
         self.W = np.zeros(self.d)
-        # Bigram特征及对应权重分值
+        # Bigram features and corresponding weight scores
         self.BF = [
             [self.bigram(prev_ti, ti) for prev_ti in range(self.nt)]
             for ti in range(self.nt)
@@ -41,32 +41,32 @@ class CRF(object):
     def SGD(self, trainset, devset, file,
             epochs, batch_size, interval, eta, decay, lmbda,
             anneal, regularize):
-        # 训练集大小
+        # Size of the training set
         n = len(trainset)
-        # 记录更新次数
+        # Record the number of updates
         count = 0
-        # 记录迭代时间
+        # Record the iteration time
         total_time = timedelta()
-        # 记录最大准确率及对应的迭代次数
+        # Record the maximum accuracy and the corresponding number of iterations
         max_e, max_accuracy = 0, 0.0
 
-        # 迭代指定次数训练模型
+        # Train the model for a specified number of iterations
         for epoch in range(1, epochs + 1):
             start = datetime.now()
-            # 随机打乱数据
+            # Shuffle the data randomly
             random.shuffle(trainset)
-            # 设置L2正则化系数
+            # Set the L2 regularization coefficient
             if not regularize:
                 lmbda = 0
-            # 按照指定大小对数据分割批次
+            # Divide the training set into batches
             batches = [trainset[i:i + batch_size]
                        for i in range(0, len(trainset), batch_size)]
             nb = len(batches)
-            # 根据批次数据更新权重
+            # Train the model with each batch
             for batch in batches:
                 if not anneal:
                     self.update(batch, lmbda, n, eta)
-                # 设置学习速率的指数衰减
+                # Anneal the learning rate
                 else:
                     self.update(batch, lmbda, n, eta * decay ** (count / nb))
                 count += 1
@@ -80,7 +80,7 @@ class CRF(object):
             print("%ss elapsed\n" % t)
             total_time += t
 
-            # 保存效果最好的模型
+            # Record the model with the highest accuracy on the development set
             if accuracy > max_accuracy:
                 self.dump(file)
                 max_e, max_accuracy = epoch, accuracy
